@@ -9,7 +9,7 @@ import lombok.Data;
 @J2dEntity(tableName = "pojo_table")
 public class Pojo {
 
-    @J2dId
+    @J2dId(generated = true)
     @J2dColumn(name = "id")
     private Integer id;
 

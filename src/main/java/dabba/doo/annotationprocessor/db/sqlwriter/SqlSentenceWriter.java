@@ -21,5 +21,5 @@ public abstract class SqlSentenceWriter {
                 "Every J2D class definition, at least must have one attribute annotated with @J2dColumn");
     }
 
-    public abstract <T> String write(final Class<T> clazz);
+
 }

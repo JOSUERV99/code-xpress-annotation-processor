@@ -1,9 +1,12 @@
 package dabba.doo.annotationprocessor.core.writer;
 
-public class ClassWriter {
+import com.squareup.javapoet.JavaFile;
 
-    public ClassWriter() {
+public abstract class ClassWriter {
 
-    }
+    public ClassWriter() {}
+
+    public abstract JavaFile writeFile();
+
 
 }
