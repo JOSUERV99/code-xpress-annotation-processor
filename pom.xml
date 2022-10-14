@@ -32,10 +32,17 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mockito.version>1.9.5</mockito.version>
         <javapoet.version>1.9.0</javapoet.version>
+        <auto-service.version>1.0-rc2</auto-service.version>
     </properties>
 
     <!-- Define the dependencies used by this project -->
     <dependencies>
+        <dependency>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service</artifactId>
+            <version>${auto-service.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
