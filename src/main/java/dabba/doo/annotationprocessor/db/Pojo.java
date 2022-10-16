@@ -13,10 +13,6 @@ public class Pojo {
     @J2dColumn(name = "id")
     private Integer id;
 
-    @J2dId
-    @J2dColumn(name = "secondId")
-    private Integer secondId;
-
     @J2dColumn(name = "message_content")
     private String messageContent;
 

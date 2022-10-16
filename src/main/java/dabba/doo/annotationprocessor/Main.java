@@ -67,7 +67,6 @@ public class Main {
         instance.setId(1);
         instance.setMessageContent("Hello");
         instance.setCountNumberFromExternalService(10);
-        instance.setSecondId(2);
         return instance;
     }
 }

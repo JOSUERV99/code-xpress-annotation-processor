@@ -17,14 +17,14 @@ public final class PojoRepository {
 
   public boolean create(final Pojo instance) {
     return namedParameterJdbcTemplate.update(
-                    "insert into pojo_table(ID, SECONDID, MESSAGE_CONTENT, COUNT_NUMBER) values(:ID, :SECONDID, :MESSAGE_CONTENT, :COUNT_NUMBER)",
+                    "insert into pojo_table( values(",
                     ParameterMapCreator.buildParamsMap(instance)
                     ) > 0;
   }
 
   public boolean delete(final Pojo instance) {
     return namedParameterJdbcTemplate.update(
-                    "delete from pojo_table where ID=:ID,SECONDID=:SECONDID",
+                    "delete from pojo_table where ",
                     ParameterMapCreator.buildParamsMap(instance)
                     ) > 0;
   }
