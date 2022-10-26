@@ -19,10 +19,10 @@ import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
-        writeJavaFile("PojoRepository", "src/main/java/j2d/generated/repository", writeRepositoryClazz());
-        writeJavaFile("PojoService", "src/main/java/j2d/generated/service", writeServiceClazz(Class.forName("j2d.generated.repository.PojoRepository")));
-    }
+//    public static void main(String[] args) throws IOException, ClassNotFoundException {
+//        writeJavaFile("PojoRepository", "src/main/java/j2d/generated/repository", writeRepositoryClazz());
+//        writeJavaFile("PojoService", "src/main/java/j2d/generated/service", writeServiceClazz(Class.forName("j2d.generated.repository.PojoRepository")));
+//    }
 
     public static void demoSqWriter() {
         final Pojo instance = getSimplePojo();
@@ -43,17 +43,17 @@ public class Main {
         System.out.println(new ParameterMapCreator().buildParamsMap(instance).getValues());
     }
 
-    public static String writeRepositoryClazz() {
-        final SpringRepositoryClassWriter classWriter = new SpringRepositoryClassWriter();
-        final JavaFile javaFile = classWriter.writeFile(Pojo.class);
-        return javaFile.toString();
-    }
+//    public static String writeRepositoryClazz() {
+//        final SpringRepositoryClassWriter classWriter = new SpringRepositoryClassWriter();
+//        final JavaFile javaFile = classWriter.writeFile(Pojo.class);
+//        return javaFile.toString();
+//    }
 
-    public static String writeServiceClazz(Class<?> clazz) {
-        final SpringServiceClassWriter classWriter = new SpringServiceClassWriter();
-        final JavaFile javaFile = classWriter.writeFile(Pojo.class, clazz);
-        return javaFile.toString();
-    }
+//    public static String writeServiceClazz(Class<?> clazz) {
+//        final SpringServiceClassWriter classWriter = new SpringServiceClassWriter();
+//        final JavaFile javaFile = classWriter.writeFile(Pojo.class, clazz);
+//        return javaFile.toString();
+//    }
 
     private static void writeJavaFile(final String filename, final String packageName, final String content) throws IOException {
         Files.createDirectories(Paths.get(packageName));

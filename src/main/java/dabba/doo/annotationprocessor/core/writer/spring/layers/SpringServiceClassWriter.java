@@ -40,12 +40,12 @@ public class SpringServiceClassWriter<T> {
                 .build();
     }
 
-    public JavaFile writeFile(Class<?> clazz, Class<?> previousLayerClazz) {
-        return JavaFile.builder("j2d.generated.service", TypeSpec.classBuilder(String.format("%sService", clazz.getSimpleName()))
+    public JavaFile writeFile(Class<?> clazz, String targetPackage) {
+        return JavaFile.builder(targetPackage + ".service", TypeSpec.classBuilder(String.format("%sService", clazz.getSimpleName()))
                         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                         .addAnnotation(Service.class)
-                        .addField(previousLayerClazz, "repository", Modifier.FINAL, Modifier.PRIVATE)
-                        .addMethod(writeBuilder(previousLayerClazz))
+                        .addField(clazz, "repository", Modifier.FINAL, Modifier.PRIVATE)
+                        .addMethod(writeBuilder(clazz))
                         .addMethod(buildCreateMethod(clazz))
                         .addMethod(buildDeleteMethod(clazz))
                         .build())

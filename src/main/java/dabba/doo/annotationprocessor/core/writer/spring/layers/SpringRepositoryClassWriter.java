@@ -49,8 +49,8 @@ public class SpringRepositoryClassWriter<T> {
                 .build();
     }
 
-    public JavaFile writeFile(Class<?> clazz) {
-        return JavaFile.builder("j2d.generated.repository", TypeSpec.classBuilder(String.format("%sRepository", clazz.getSimpleName()))
+    public JavaFile writeFile(Class<?> clazz, final String targetPackage) {
+        return JavaFile.builder(targetPackage + ".repository", TypeSpec.classBuilder(String.format("%sRepository", clazz.getSimpleName()))
                         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                         .addAnnotation(Repository.class)
                         .addField(NamedParameterJdbcTemplate.class, "namedParameterJdbcTemplate", Modifier.FINAL, Modifier.PRIVATE)

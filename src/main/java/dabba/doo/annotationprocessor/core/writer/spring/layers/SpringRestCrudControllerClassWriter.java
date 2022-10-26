@@ -1,12 +1,10 @@
 package dabba.doo.annotationprocessor.core.writer.spring.layers;
 
 import com.squareup.javapoet.JavaFile;
-import dabba.doo.annotationprocessor.core.writer.spring.SpringRestApiWriter;
 
-public class SpringRestCrudControllerClassWriter extends SpringRestApiWriter {
+public class SpringRestCrudControllerClassWriter {
 
-    @Override
-    public JavaFile writeFile(Class<?> clazz) {
+    public JavaFile writeFile(Class<?> clazz, final String targetPackage) {
         return null;
     }
 
