@@ -2,6 +2,7 @@ package dabba.doo.annotationprocessor.db.sqlwriter;
 
 import dabba.doo.annotationprocessor.core.annotations.entity.J2dColumn;
 import dabba.doo.annotationprocessor.core.annotations.entity.J2dEntity;
+import dabba.doo.annotationprocessor.core.reflection.ClassReflectionTool;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -9,30 +10,28 @@ import java.util.stream.Collectors;
 
 public class SqlReadSentenceGenerator {
 
-    public <T> String selectAll(final Class<T> clazz)
-    {
-        final StringBuilder selectStringBuilder = new StringBuilder("select ");
+    public static <T> String writeSelectSentence(final Class<?> clazz) {
 
-        // add insert columns
-        final Map<String, Object> fieldsMap =
-                Arrays.stream(clazz.getDeclaredFields())
-                        .filter(field -> field.isAnnotationPresent(J2dColumn.class))
-                        .collect(Collectors.toMap(
+        final Map<String, String> columnNames = Arrays.stream(clazz.getDeclaredFields())
+                .filter(field -> field.isAnnotationPresent(J2dColumn.class))
+                .collect(
+                        Collectors.toMap(
                                 field -> field.getName(),
                                 field -> field.getAnnotation(J2dColumn.class).name().toUpperCase()));
 
-        final String[] fields = fieldsMap.keySet().toArray(new String[0]);
-        for (int i = 0; i < fields.length; i++) {
-            final String field = fields[i];
-            selectStringBuilder
-                    .append(fieldsMap.get(field))
-                    .append(" as '")
-                    .append(field)
-                    .append("'")
-                    .append(i < fields.length - 1 ? ", " : "");
-        }
+        final StringBuilder selectSentence = new StringBuilder().append("select ");
 
-        return selectStringBuilder.append(" from ").append(clazz.getAnnotation(J2dEntity.class).tableName()).toString();
+        selectSentence.append(
+                columnNames.entrySet().stream()
+                        .map(entry -> entry.getValue() + " as " + entry.getKey())
+                        .collect(Collectors.joining(",")));
+
+        return selectSentence.append(" from ").append(ClassReflectionTool.getTableName(clazz)).toString();
+    }
+
+    public static <T> String writeSelectSentenceById(final Class<?> clazz) {
+        final String idFieldAsString = ClassReflectionTool.getIdField(clazz).getAnnotation(J2dColumn.class).name();
+        return "select * from " + ClassReflectionTool.getTableName(clazz) + " where " + idFieldAsString + "= :" + idFieldAsString;
     }
 
 }

@@ -3,9 +3,12 @@ package dabba.doo.annotationprocessor.db.sqlwriter;
 import dabba.doo.annotationprocessor.core.annotations.entity.J2dColumn;
 import dabba.doo.annotationprocessor.core.annotations.entity.J2dEntity;
 import dabba.doo.annotationprocessor.core.annotations.entity.J2dId;
+import dabba.doo.annotationprocessor.core.reflection.ClassReflectionTool;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SqlWriteSentenceGenerator {
@@ -31,7 +34,7 @@ public class SqlWriteSentenceGenerator {
         // add insert columns
         final List<String> fields =
                 Arrays.stream(clazz.getDeclaredFields())
-                        .filter(field -> field.isAnnotationPresent(J2dColumn.class))
+                        .filter(field -> field.isAnnotationPresent(J2dColumn.class) && !field.isAnnotationPresent(J2dId.class))
                         .map(field -> field.getAnnotation(J2dColumn.class).name().toUpperCase())
                         .collect(Collectors.toList());
 
@@ -41,6 +44,30 @@ public class SqlWriteSentenceGenerator {
             valuesStringBuilder.append(":").append(columnName).append((i < fields.size() - 1 ? ", " : ")"));
         }
 
-        return insertStringBuilder.append(" ").append(valuesStringBuilder.toString()).toString();
+        return insertStringBuilder.append(" ").append(valuesStringBuilder).toString();
+    }
+
+    public static String writeUpdateSentence(final Class<?> clazz) {
+
+        final StringBuilder updateStringBuilder = new StringBuilder("update ").append(clazz.getAnnotation(J2dEntity.class).tableName()).append(" ");
+        final StringBuilder setStringBuilder = new StringBuilder("set ");
+
+        final List<String> fields =
+                Arrays.stream(clazz.getDeclaredFields())
+                        .filter(field -> field.isAnnotationPresent(J2dColumn.class) && !field.isAnnotationPresent(J2dId.class))
+                        .map(field -> field.getAnnotation(J2dColumn.class).name().toUpperCase())
+                        .collect(Collectors.toList());
+
+        for (int i = 0; i < fields.size(); i++) {
+            final String columnName = fields.get(i);
+            updateStringBuilder.append(columnName).append((i < fields.size() - 1 ? ", " : ")"));
+            setStringBuilder.append(":").append(columnName).append((i < fields.size() - 1 ? ", " : ")"));
+        }
+
+        final StringBuilder whereStringBuilder = new StringBuilder(" ");
+        final String idField = ClassReflectionTool.getIdField(clazz).getAnnotation(J2dColumn.class).name();
+        whereStringBuilder.append("where ").append(idField).append(" =:" + idField);
+
+        return updateStringBuilder.append(" ").append(setStringBuilder).append(" ").append(whereStringBuilder).toString();
     }
 }

@@ -44,8 +44,7 @@ public class J2dAnnotationProcessor extends AbstractProcessor {
         for (Element element : roundEnv.getElementsAnnotatedWith(annotation)) {
 
             System.out.println(element.toString());
-            System.out.println(Class.forName(element.toString()));
-
+            System.out.println(Class.forName(element.toString(), true, this.getClass().getClassLoader()));
             if (J2dSpringRestCrudApi.class.getName().equals(type.toString())) {
                 final SpringRestApiWriter springRestApiWriter = new SpringRestApiWriter();
                 Class<?> clazz = null;
@@ -54,7 +53,6 @@ public class J2dAnnotationProcessor extends AbstractProcessor {
                 } catch (ClassNotFoundException e) {
                     throw e;
                 }
-                System.out.println();
                 springRestApiWriter.writeRestApiCode(clazz, "j2d.generated");
             }
 
