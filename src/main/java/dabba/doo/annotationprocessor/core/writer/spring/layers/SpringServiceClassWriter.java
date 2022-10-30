@@ -55,12 +55,12 @@ public class SpringServiceClassWriter<T> {
                 .build();
     }
 
-    public JavaFile writeFile(Class<?> clazz, String targetPackage) {
+    public JavaFile writeFile(Class<?> clazz, Class<?> previousLayerClazz, String targetPackage) {
         return JavaFile.builder(targetPackage + ".service", TypeSpec.classBuilder(String.format("%sService", clazz.getSimpleName()))
                         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                         .addAnnotation(Service.class)
                         .addField(clazz, "repository", Modifier.FINAL, Modifier.PRIVATE)
-                        .addMethod(writeBuilder(clazz))
+                        .addMethod(writeBuilder(previousLayerClazz))
                         .addMethod(buildGetMethod(clazz))
                         .addMethod(buildUpdateMethod(clazz))
                         .addMethod(buildCreateMethod(clazz))

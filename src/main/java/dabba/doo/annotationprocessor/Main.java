@@ -2,7 +2,6 @@ package dabba.doo.annotationprocessor;
 
 import com.squareup.javapoet.JavaFile;
 import dabba.doo.annotationprocessor.core.writer.spring.layers.SpringRepositoryClassWriter;
-import dabba.doo.annotationprocessor.core.writer.spring.layers.SpringRestCrudControllerClassWriter;
 import dabba.doo.annotationprocessor.core.writer.spring.layers.SpringServiceClassWriter;
 import dabba.doo.annotationprocessor.db.Pojo;
 import dabba.doo.annotationprocessor.db.paramresolver.ParameterMapCreator;
@@ -20,10 +19,10 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-//        testSqlSentences(Pojo.class);
-
-        writeServiceClazz(Pojo.class);
-        writeRepositoryClazz(Pojo.class);
+////        testSqlSentences(Pojo.class);
+//
+//        writeServiceClazz(Pojo.class);
+//        writeRepositoryClazz(Pojo.class);
     }
 
     public static void testSqlSentences(Class<?> clazz) {
@@ -80,11 +79,11 @@ public class Main {
         return javaFile.toString();
     }
 
-    public static String writeServiceClazz(Class<?> clazz) {
-        final SpringServiceClassWriter classWriter = new SpringServiceClassWriter();
-        final JavaFile javaFile = classWriter.writeFile(Pojo.class, clazz.getPackage().getName());
-        return javaFile.toString();
-    }
+//    public static String writeServiceClazz(Class<?> clazz) {
+//        final SpringServiceClassWriter classWriter = new SpringServiceClassWriter();
+//        final JavaFile javaFile = classWriter.writeFile(Pojo.class, clazz.getPackage().getName());
+//        return javaFile.toString();
+//    }
 
 //    public static String writeControllerClazz(Class<?> clazz) {
 //        final SpringRestCrudControllerClassWriter classWriter = new SpringRestCrudControllerClassWriter();

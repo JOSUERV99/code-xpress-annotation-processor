@@ -3,9 +3,11 @@ package dabba.doo.annotationprocessor.core.reflection;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
+import dabba.doo.annotationprocessor.core.annotations.J2dSpringRestCrudApi;
 import dabba.doo.annotationprocessor.core.annotations.entity.J2dColumn;
 import dabba.doo.annotationprocessor.core.annotations.entity.J2dEntity;
 import dabba.doo.annotationprocessor.core.annotations.entity.J2dId;
+import dabba.doo.annotationprocessor.db.Pojo;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -46,6 +48,15 @@ public class ClassReflectionTool {
         ClassName list = ClassName.get("java.util", "List");
         TypeName instanceList = ParameterizedTypeName.get(list, clazzType);
         return instanceList;
+    }
+
+    public static String getPathFromMainApiAnnotation(Class<?> clazz, Class<?> annotationClass) {
+
+        if (J2dSpringRestCrudApi.class.equals(annotationClass)) {
+            return clazz.getAnnotation(J2dSpringRestCrudApi.class).path();
+        }
+
+        throw new IllegalStateException("No path fetched from annotation " + annotationClass.getName());
     }
 
 }

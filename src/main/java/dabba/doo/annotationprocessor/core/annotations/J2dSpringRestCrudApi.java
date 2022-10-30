@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
 @J2dSpringRestCrudService
 @J2dSpringRestCrudController
 public @interface J2dSpringRestCrudApi {
-
+    String path() default "";
 }
