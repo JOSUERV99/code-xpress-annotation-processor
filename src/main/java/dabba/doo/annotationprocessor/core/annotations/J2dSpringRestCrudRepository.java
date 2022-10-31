@@ -6,6 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 //@Target(ElementType.ANNOTATION_TYPE)
-//@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface J2dSpringRestCrudRepository {
 }

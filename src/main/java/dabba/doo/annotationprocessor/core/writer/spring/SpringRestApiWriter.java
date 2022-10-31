@@ -1,6 +1,8 @@
 package dabba.doo.annotationprocessor.core.writer.spring;
 
 import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.TypeSpec;
+import dabba.doo.annotationprocessor.core.writer.spring.layers.SpringControllerClassWriter;
 import dabba.doo.annotationprocessor.core.writer.spring.layers.SpringRepositoryClassWriter;
 import dabba.doo.annotationprocessor.core.writer.spring.layers.SpringServiceClassWriter;
 
@@ -10,14 +12,14 @@ public class SpringRestApiWriter {
 
         final JavaFile repositoryJavaFile = new SpringRepositoryClassWriter().writeFile(clazz, targetPackage);
 
-        final Class<?> previousRepoLayerClass = null;
-        final JavaFile serviceJavaFile = new SpringServiceClassWriter().writeFile(clazz, previousRepoLayerClass, targetPackage);
+        final TypeSpec repositoryTypeName = repositoryJavaFile.typeSpec;
+        final JavaFile serviceJavaFile = new SpringServiceClassWriter().writeFile(clazz, repositoryTypeName.superclass, targetPackage);
 
-        final Class<?> previousServiceLayerClass = null;
-        final JavaFile controllerJavaFile = new SpringServiceClassWriter().writeFile(clazz, previousServiceLayerClass, targetPackage);
+        final TypeSpec serviceTypeName = serviceJavaFile.typeSpec;
+        final JavaFile controllerJavaFile = new SpringControllerClassWriter().writeFile(clazz, serviceTypeName.superclass, targetPackage);
 
-        System.out.println("REPO { " + repositoryJavaFile.toString() + " }");
-        System.out.println("SERVICE { " +serviceJavaFile.toString() + " }");
+        System.out.println("REPO { " + repositoryJavaFile + " }");
+        System.out.println("SERVICE { " + serviceJavaFile + " }");
         System.out.println("CONTROLLER { " +controllerJavaFile.toString() + " }");
     }
 }

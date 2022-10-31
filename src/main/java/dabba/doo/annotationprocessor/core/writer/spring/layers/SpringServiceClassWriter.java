@@ -2,6 +2,7 @@ package dabba.doo.annotationprocessor.core.writer.spring.layers;
 
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import dabba.doo.annotationprocessor.core.reflection.ClassReflectionTool;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import javax.lang.model.element.Modifier;
 
 public class SpringServiceClassWriter<T> {
 
-    public MethodSpec writeBuilder(Class<?> previousClassLayer) {
+    public MethodSpec writeBuilder(TypeName previousClassLayer) {
         return MethodSpec.constructorBuilder()
                 .addAnnotation(Autowired.class)
                 .addParameter(previousClassLayer, "repository", Modifier.FINAL)
@@ -55,11 +56,11 @@ public class SpringServiceClassWriter<T> {
                 .build();
     }
 
-    public JavaFile writeFile(Class<?> clazz, Class<?> previousLayerClazz, String targetPackage) {
+    public JavaFile writeFile(Class<?> clazz, TypeName previousLayerClazz, String targetPackage) {
         return JavaFile.builder(targetPackage + ".service", TypeSpec.classBuilder(String.format("%sService", clazz.getSimpleName()))
                         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                         .addAnnotation(Service.class)
-                        .addField(clazz, "repository", Modifier.FINAL, Modifier.PRIVATE)
+                        .addField(previousLayerClazz, "repository", Modifier.FINAL, Modifier.PRIVATE)
                         .addMethod(writeBuilder(previousLayerClazz))
                         .addMethod(buildGetMethod(clazz))
                         .addMethod(buildUpdateMethod(clazz))

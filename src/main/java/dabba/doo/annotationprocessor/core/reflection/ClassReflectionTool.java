@@ -7,16 +7,30 @@ import dabba.doo.annotationprocessor.core.annotations.J2dSpringRestCrudApi;
 import dabba.doo.annotationprocessor.core.annotations.entity.J2dColumn;
 import dabba.doo.annotationprocessor.core.annotations.entity.J2dEntity;
 import dabba.doo.annotationprocessor.core.annotations.entity.J2dId;
-import dabba.doo.annotationprocessor.db.Pojo;
 
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.TypeElement;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ClassReflectionTool {
+
+    public static String getPackageName(TypeElement classElement) {
+        return ((PackageElement) classElement.getEnclosingElement()).getQualifiedName().toString();
+    }
+
+    public static List<? extends Element> getDeclaredFieldsByType(TypeElement typeElement) {
+        return typeElement.getEnclosedElements().stream()
+                .filter(e -> ElementKind.FIELD.equals(e.getKind()))
+                .collect(Collectors.toList());
+    }
 
     public static <T> Map<String, Class<?>> getAttributesMapFromClass(final Class<T> clazz) {
         return Stream.of(clazz.getDeclaredFields()).collect(Collectors.toMap(Field::getName, Field::getType));

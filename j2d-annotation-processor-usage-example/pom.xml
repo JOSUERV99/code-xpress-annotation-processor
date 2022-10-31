@@ -14,6 +14,7 @@
         <spring.version>4.3.18.RELEASE</spring.version>
         <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
         <j2d-annotation-processor.version>0.0.1</j2d-annotation-processor.version>
+        <lombok.version>1.18.20</lombok.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -39,6 +40,11 @@
             <artifactId>spring-context-support</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -53,11 +59,23 @@
                     <!--                        <generatedSourcesDirectory>-->
                     <!--                            ${project.build.directory}/generated-sources-->
                     <!--                        </generatedSourcesDirectory>-->
-                    <annotationProcessors>
-                        <annotationProcessor>
-                            dabba.doo.annotationprocessor.core.J2dAnnotationProcessor
-                        </annotationProcessor>
-                    </annotationProcessors>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>dabba.doo</groupId>
+                            <artifactId>j2d-annotation-processor</artifactId>
+                            <version>${j2d-annotation-processor.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+<!--                    <annotationProcessors>-->
+<!--                        <annotationProcessor>-->
+<!--                            dabba.doo.annotationprocessor.core.J2dAnnotationProcessor-->
+<!--                        </annotationProcessor>-->
+<!--                    </annotationProcessors>-->
                 </configuration>
             </plugin>
         </plugins>

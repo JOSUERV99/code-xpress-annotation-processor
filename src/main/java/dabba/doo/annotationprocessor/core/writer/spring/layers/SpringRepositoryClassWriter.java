@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import javax.lang.model.element.Modifier;
 import java.lang.reflect.Field;
 
-public class SpringRepositoryClassWriter<T> {
+public class SpringRepositoryClassWriter {
 
     public MethodSpec writeBuilder() {
         return MethodSpec.constructorBuilder()
@@ -36,7 +36,7 @@ public class SpringRepositoryClassWriter<T> {
                     .build();
     }
 
-    public MethodSpec buildGetMethod(final Class<T> clazz) {
+    public <T> MethodSpec buildGetMethod(final Class<T> clazz) {
         return MethodSpec.methodBuilder("get")
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(clazz, "instance", Modifier.FINAL)
@@ -81,6 +81,7 @@ public class SpringRepositoryClassWriter<T> {
                         .addAnnotation(Repository.class)
                         .addField(NamedParameterJdbcTemplate.class, "namedParameterJdbcTemplate", Modifier.FINAL, Modifier.PRIVATE)
                         .addMethod(writeBuilder())
+                        .addMethod(buildGetMethod(clazz))
                         .addMethod(buildCreateMethod(clazz))
                         .addMethod(buildDeleteMethod(clazz))
                         .addMethod(buildUpdateMethod(clazz))
