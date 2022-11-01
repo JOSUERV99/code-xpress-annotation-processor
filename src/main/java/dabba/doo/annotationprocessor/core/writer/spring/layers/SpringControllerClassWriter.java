@@ -8,6 +8,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import dabba.doo.annotationprocessor.core.annotations.J2dSpringRestCrudApi;
 import dabba.doo.annotationprocessor.core.reflection.ClassReflectionTool;
+import dabba.doo.annotationprocessor.core.writer.JavaClassFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,66 +19,75 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
 
+/**
+ * SpringControllerClassWriter
+ * Writes a Spring-like controller class, where the request will be received
+ * @author josue.rojas
+ */
 public class SpringControllerClassWriter {
 
     private final String fileSuffixPackageName = "controller";
     private final String fileSuffixClassName = "Controller";
+    private String lastLayerAttributeName = "service";
 
     public MethodSpec writeBuilder(TypeName previousTypeLayer) {
         return MethodSpec.constructorBuilder()
                 .addAnnotation(Autowired.class)
-                .addParameter(ParameterSpec.builder(previousTypeLayer, "service", Modifier.FINAL).build())
-                .addStatement("this.$N = $N", "service", "service")
+                .addParameter(ParameterSpec.builder(previousTypeLayer, lastLayerAttributeName, Modifier.FINAL).build())
+                .addStatement("this.$N = $N", lastLayerAttributeName, lastLayerAttributeName)
                 .build();
     }
 
-    public <T> MethodSpec buildCreateMethod(final Class<T> clazz) {
+    public MethodSpec buildCreateMethod(final TypeElement clazz) {
         return MethodSpec.methodBuilder("create")
                 .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(AnnotationSpec.builder(PostMapping.class).addMember("path", ClassReflectionTool.getPathFromMainApiAnnotation(clazz, J2dSpringRestCrudApi.class)).build())
-                .addParameter(ParameterSpec.builder(clazz, "body", Modifier.FINAL).addAnnotation(RequestBody.class).build())
-                .addStatement("return service.create(body)")
+                .addAnnotation(AnnotationSpec.builder(PostMapping.class).addMember("path", "$S", ClassReflectionTool.getPathFromMainApiAnnotation(clazz, J2dSpringRestCrudApi.class)).build())
+                .addParameter(ParameterSpec.builder(ClassReflectionTool.getTypeNameFromTypeElement(clazz), "body", Modifier.FINAL).addAnnotation(RequestBody.class).build())
+                .addStatement("return $N.create(body)", lastLayerAttributeName)
                 .returns(boolean.class)
                 .build();
     }
 
-    public <T> MethodSpec buildGetMethod(final Class<T> clazz) {
+    public MethodSpec buildGetMethod(final TypeElement clazz) {
         return MethodSpec.methodBuilder("get")
                 .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(AnnotationSpec.builder(GetMapping.class).addMember("path", ClassReflectionTool.getPathFromMainApiAnnotation(clazz, J2dSpringRestCrudApi.class)).build())
-                .addParameter(clazz, "instance", Modifier.FINAL)
-                .addStatement("return service.get(body)")
+                .addAnnotation(AnnotationSpec.builder(GetMapping.class).addMember("path", "$S", ClassReflectionTool.getPathFromMainApiAnnotation(clazz, J2dSpringRestCrudApi.class)).build())
+                .addStatement("return $N.get()", lastLayerAttributeName)
                 .returns(ClassReflectionTool.getTypeNameForTemplateList(clazz))
                 .build();
     }
 
-    public <T> MethodSpec buildUpdateMethod(final Class<T> clazz) {
+    public <T> MethodSpec buildUpdateMethod(final TypeElement clazz) {
         return MethodSpec.methodBuilder("update")
                 .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(AnnotationSpec.builder(PutMapping.class).addMember("path", ClassReflectionTool.getPathFromMainApiAnnotation(clazz, J2dSpringRestCrudApi.class)).build())
-                .addParameter(ParameterSpec.builder(clazz, ClassReflectionTool.getIdField(clazz).getName(), Modifier.FINAL).addAnnotation(RequestParam.class).build())
-                .addParameter(ParameterSpec.builder(clazz, "instance", Modifier.FINAL).addAnnotation(RequestBody.class).build())
-                .addStatement("return service.update(id, body)")
+                .addAnnotation(AnnotationSpec.builder(PutMapping.class).addMember("path", "$S", ClassReflectionTool.getPathFromMainApiAnnotation(clazz, J2dSpringRestCrudApi.class, "id")).build())
+                .addParameter(ParameterSpec.builder(ClassReflectionTool.getTypeNameForId(clazz), "id", Modifier.FINAL).addAnnotation(AnnotationSpec.builder(RequestParam.class).addMember("value", "$S", "id").build()).build())
+                .addParameter(ParameterSpec.builder(ClassReflectionTool.getTypeNameFromTypeElement(clazz), "body", Modifier.FINAL).addAnnotation(RequestBody.class).build())
+                .addStatement("return $N.update(id, body)", lastLayerAttributeName)
                 .returns(boolean.class)
                 .build();
     }
 
-    public <T> MethodSpec buildDeleteMethod(final Class<T> clazz) {
+    public MethodSpec buildDeleteMethod(final TypeElement clazz) {
         return MethodSpec.methodBuilder("delete")
                 .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(AnnotationSpec.builder(DeleteMapping.class).addMember("path", ClassReflectionTool.getPathFromMainApiAnnotation(clazz, J2dSpringRestCrudApi.class)).build())
-                .addParameter(ParameterSpec.builder(clazz, ClassReflectionTool.getIdField(clazz).getName(), Modifier.FINAL).addAnnotation(RequestParam.class).build())
-                .addStatement("return service.delete(id)")
+                .addAnnotation(AnnotationSpec.builder(DeleteMapping.class).addMember("path", "$S", ClassReflectionTool.getPathFromMainApiAnnotation(clazz, J2dSpringRestCrudApi.class, "id")).build())
+                .addParameter(ParameterSpec.builder(ClassReflectionTool.getTypeNameForId(clazz), ClassReflectionTool.getIdField(clazz).getSimpleName().toString(), Modifier.FINAL).addAnnotation(AnnotationSpec.builder(RequestParam.class).addMember("value", "$S", "id").build()).build())
+                .addStatement("return $N.delete(id)", lastLayerAttributeName)
                 .returns(boolean.class)
                 .build();
     }
 
-    public JavaFile writeFile(Class<?> clazz, TypeName previousLayerClazz, final String targetPackage) {
-        return JavaFile.builder(targetPackage + "." + fileSuffixPackageName, TypeSpec.classBuilder(String.format("%s%s", clazz.getSimpleName(), fileSuffixClassName))
+    public JavaClassFile writeFile(TypeElement clazz, TypeName previousLayerClazz, final String targetPackage) {
+        lastLayerAttributeName = ClassReflectionTool.getSimpleNameForAttr(previousLayerClazz);
+        final String packageName = targetPackage + "." + fileSuffixPackageName;
+        final String className = String.format("%sController", clazz.getSimpleName());
+        final JavaFile javaFile =  JavaFile.builder(targetPackage + "." + fileSuffixPackageName, TypeSpec.classBuilder(className)
                         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                         .addAnnotation(Controller.class)
-                        .addField(previousLayerClazz, "service", Modifier.FINAL, Modifier.PRIVATE)
+                        .addField(previousLayerClazz, lastLayerAttributeName, Modifier.FINAL, Modifier.PRIVATE)
                         .addMethod(writeBuilder(previousLayerClazz))
                         .addMethod(buildGetMethod(clazz))
                         .addMethod(buildCreateMethod(clazz))
@@ -85,5 +95,12 @@ public class SpringControllerClassWriter {
                         .addMethod(buildUpdateMethod(clazz))
                         .build())
                 .build();
+
+        return new JavaClassFile()
+                .setJavaFile(javaFile)
+                .setClassName(className)
+                .setPackageName(packageName)
+                .setFileName(String.format("%s.%s.java", packageName, className))
+                .setName((String.format("%s.%s", packageName, className)));
     }
 }

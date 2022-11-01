@@ -2,59 +2,62 @@ package dabba.doo.annotationprocessor.core.writer.spring.layers;
 
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeSpec;
 import dabba.doo.annotationprocessor.core.reflection.ClassReflectionTool;
+import dabba.doo.annotationprocessor.core.writer.JavaClassFile;
 import dabba.doo.annotationprocessor.db.paramresolver.ParameterMapCreator;
 import dabba.doo.annotationprocessor.db.sqlwriter.SqlReadSentenceGenerator;
 import dabba.doo.annotationprocessor.db.sqlwriter.SqlWriteSentenceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.lang.model.element.Modifier;
-import java.lang.reflect.Field;
+import javax.lang.model.element.TypeElement;
 
 public class SpringRepositoryClassWriter {
+
+    public static final String NAMED_PARAMETER_JDBC_TEMPLATE = "namedParameterJdbcTemplate";
 
     public MethodSpec writeBuilder() {
         return MethodSpec.constructorBuilder()
                 .addAnnotation(Autowired.class)
-                .addParameter(NamedParameterJdbcTemplate.class, "namedParameterJdbcTemplate")
-                .addStatement("this.$N = $N", "namedParameterJdbcTemplate", "namedParameterJdbcTemplate")
+                .addParameter(NamedParameterJdbcTemplate.class, NAMED_PARAMETER_JDBC_TEMPLATE)
+                .addStatement("this.$N = $N", NAMED_PARAMETER_JDBC_TEMPLATE, NAMED_PARAMETER_JDBC_TEMPLATE)
                 .build();
     }
 
-    public <T> MethodSpec buildCreateMethod(final Class<T> clazz) {
+    public MethodSpec buildCreateMethod(final TypeElement clazz) {
         return MethodSpec.methodBuilder("create")
-                    .addModifiers(Modifier.PUBLIC)
-                    .addParameter(clazz, "instance", Modifier.FINAL)
-                    .addStatement("return namedParameterJdbcTemplate.update(\n" +
-                            "            $S,\n" +
-                            "            $T.buildParamsMap(instance)\n" +
-                            "            ) > 0", SqlWriteSentenceGenerator.writeInsertSentence(clazz), ParameterMapCreator.class)
-                    .returns(boolean.class)
-                    .build();
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(ClassReflectionTool.getTypeNameFromTypeElement(clazz), "instance", Modifier.FINAL)
+                .addStatement("return namedParameterJdbcTemplate.update(\n" +
+                        "            $S,\n" +
+                        "            $T.buildParamsMap(instance)\n" +
+                        "            ) > 0", SqlWriteSentenceGenerator.writeInsertSentence(clazz), ParameterMapCreator.class)
+                .returns(boolean.class)
+                .build();
     }
 
-    public <T> MethodSpec buildGetMethod(final Class<T> clazz) {
+    public MethodSpec buildGetMethod(final TypeElement clazz) {
         return MethodSpec.methodBuilder("get")
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(clazz, "instance", Modifier.FINAL)
                 .addStatement("return namedParameterJdbcTemplate.queryForList(\n" +
                         "            $S,\n" +
+                        "            new $T(),\n" +
                         "            $T.class"+
-                        "            )", SqlReadSentenceGenerator.writeSelectSentence(clazz), clazz)
+                        "            )", SqlReadSentenceGenerator.writeSelectSentence(clazz), MapSqlParameterSource.class, clazz)
                 .returns(ClassReflectionTool.getTypeNameForTemplateList(clazz))
                 .build();
     }
 
-    public <T> MethodSpec buildUpdateMethod(final Class<T> clazz) {
-        Field idField = ClassReflectionTool.getIdField(clazz);
-
+    public MethodSpec buildUpdateMethod(final TypeElement clazz) {
         return MethodSpec.methodBuilder("update")
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(idField.getType(), "id", Modifier.FINAL)
-                .addParameter(clazz, "instance", Modifier.FINAL)
+                .addParameter(ParameterSpec.builder(ClassReflectionTool.getTypeNameForId(clazz), "id", Modifier.FINAL).build())
+                .addParameter(ClassReflectionTool.getTypeNameFromTypeElement(clazz), "instance", Modifier.FINAL)
                 .addStatement("return namedParameterJdbcTemplate.update(\n" +
                         "            $S,\n" +
                         "            $T.buildParamsMap(instance).addValue($S, id)\n" +
@@ -63,23 +66,25 @@ public class SpringRepositoryClassWriter {
                 .build();
     }
 
-    public <T> MethodSpec buildDeleteMethod(final Class<T> clazz) {
+    public MethodSpec buildDeleteMethod(final TypeElement clazz) {
         return MethodSpec.methodBuilder("delete")
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(clazz, "instance", Modifier.FINAL)
+                .addParameter(ParameterSpec.builder(ClassReflectionTool.getTypeNameForId(clazz), "id", Modifier.FINAL).build())
                 .addStatement("return namedParameterJdbcTemplate.update(\n" +
                         "            $S,\n" +
-                        "            $T.buildParamsMap(instance)\n" +
-                        "            ) > 0", SqlWriteSentenceGenerator.writeDeleteSentence(clazz), ParameterMapCreator.class)
+                        "            new $T().addValue($S, id)\n" +
+                        "            ) > 0", SqlWriteSentenceGenerator.writeDeleteSentence(clazz), MapSqlParameterSource.class, "id")
                 .returns(boolean.class)
                 .build();
     }
 
-    public JavaFile writeFile(Class<?> clazz, final String targetPackage) {
-        return JavaFile.builder(targetPackage + ".repository", TypeSpec.classBuilder(String.format("%sRepository", clazz.getSimpleName()))
+    public JavaClassFile writeFile(TypeElement clazz, final String targetPackage) {
+        final String packageName = targetPackage + ".repository";
+        final String className = String.format("%sRepository", clazz.getSimpleName());
+        final JavaFile javaFile = JavaFile.builder(packageName, TypeSpec.classBuilder(className)
                         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                         .addAnnotation(Repository.class)
-                        .addField(NamedParameterJdbcTemplate.class, "namedParameterJdbcTemplate", Modifier.FINAL, Modifier.PRIVATE)
+                        .addField(NamedParameterJdbcTemplate.class, NAMED_PARAMETER_JDBC_TEMPLATE, Modifier.FINAL, Modifier.PRIVATE)
                         .addMethod(writeBuilder())
                         .addMethod(buildGetMethod(clazz))
                         .addMethod(buildCreateMethod(clazz))
@@ -87,6 +92,12 @@ public class SpringRepositoryClassWriter {
                         .addMethod(buildUpdateMethod(clazz))
                         .build())
                 .build();
-    }
 
+        return new JavaClassFile()
+                .setJavaFile(javaFile)
+                .setClassName(className)
+                .setPackageName(packageName)
+                .setFileName(String.format("%s.%s.java", packageName, className))
+                .setName((String.format("%s.%s", packageName, className)));
+    }
 }

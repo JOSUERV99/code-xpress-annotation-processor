@@ -7,7 +7,7 @@ import dabba.doo.annotationprocessor.core.annotations.entity.J2dId;
 import lombok.Data;
 
 @Data
-@J2dSpringRestCrudApi
+@J2dSpringRestCrudApi(path = "/pojos")
 @J2dEntity(tableName = "pojo_table")
 public class Pojo {
 
@@ -15,7 +15,6 @@ public class Pojo {
     @J2dColumn(name = "id")
     private Integer id;
 
-    @J2dId
     @J2dColumn(name = "secondId")
     private Integer secondId;
 
