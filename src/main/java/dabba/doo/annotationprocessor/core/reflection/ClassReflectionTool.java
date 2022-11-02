@@ -64,10 +64,6 @@ public class ClassReflectionTool {
         return ClassName.get(typeElement);
     }
 
-    public static String getTableName(Class<?> clazz) {
-        return clazz.getAnnotation(J2dEntity.class).tableName();
-    }
-
     public static String getTableName(TypeElement clazz) {
         return clazz.getAnnotation(J2dEntity.class).tableName();
     }
@@ -76,21 +72,9 @@ public class ClassReflectionTool {
         return Arrays.stream(element.toString().split("\\.")).filter(part -> part.matches("[a-z_]+")).collect(Collectors.joining("."));
     }
 
-    public static String getSimpleName(Element element) {
-        return Arrays.stream(element.toString().split("\\.")).filter(part -> part.matches("[A-Z][a-zA-Z]+")).findFirst().get();
-    }
-
     public static String getSimpleNameForAttr(TypeName element) {
-        System.out.println(element.toString());
         final String simpleName =  Arrays.stream(element.toString().split("\\.")).filter(part -> part.matches("[A-Z][a-zA-Z]+")).findFirst().get();
         return ("" + simpleName.charAt(0)).toLowerCase() + simpleName.substring(1);
-    }
-
-    public static <T> TypeName getTypeNameForTemplateList(final Class<T> clazz) {
-        ClassName clazzType = ClassName.get(clazz);
-        ClassName list = ClassName.get("java.util", "List");
-        TypeName instanceList = ParameterizedTypeName.get(list, clazzType);
-        return instanceList;
     }
 
     public static TypeName getTypeNameForTemplateList(final TypeElement clazz) {
@@ -119,7 +103,14 @@ public class ClassReflectionTool {
         throw new IllegalStateException("No path fetched from annotation " + annotationClass.getName());
     }
 
-
+    public static Class<?> getClassFromName(final String className) {
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public static ClassName getClassNameFromClassName(String packageName, String simpleName) {
         return ClassName.get(packageName, simpleName);

@@ -7,6 +7,7 @@ import com.squareup.javapoet.TypeSpec;
 import dabba.doo.annotationprocessor.core.reflection.ClassReflectionTool;
 import dabba.doo.annotationprocessor.core.writer.JavaClassFile;
 import dabba.doo.annotationprocessor.db.paramresolver.ParameterMapCreator;
+import dabba.doo.annotationprocessor.db.rowmapper.JacksonRowMapper;
 import dabba.doo.annotationprocessor.db.sqlwriter.SqlReadSentenceGenerator;
 import dabba.doo.annotationprocessor.db.sqlwriter.SqlWriteSentenceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import java.util.Map;
 
 public class SpringRepositoryClassWriter {
 
@@ -24,6 +26,7 @@ public class SpringRepositoryClassWriter {
     public MethodSpec writeBuilder() {
         return MethodSpec.constructorBuilder()
                 .addAnnotation(Autowired.class)
+                .addModifiers(Modifier.PUBLIC)
                 .addParameter(NamedParameterJdbcTemplate.class, NAMED_PARAMETER_JDBC_TEMPLATE)
                 .addStatement("this.$N = $N", NAMED_PARAMETER_JDBC_TEMPLATE, NAMED_PARAMETER_JDBC_TEMPLATE)
                 .build();
@@ -44,11 +47,8 @@ public class SpringRepositoryClassWriter {
     public MethodSpec buildGetMethod(final TypeElement clazz) {
         return MethodSpec.methodBuilder("get")
                 .addModifiers(Modifier.PUBLIC)
-                .addStatement("return namedParameterJdbcTemplate.queryForList(\n" +
-                        "            $S,\n" +
-                        "            new $T(),\n" +
-                        "            $T.class"+
-                        "            )", SqlReadSentenceGenerator.writeSelectSentence(clazz), MapSqlParameterSource.class, clazz)
+                .addStatement("return (List<$N>) $T.mapMultipleRecords(namedParameterJdbcTemplate.queryForList(\n" +
+                        "            $S, new $T(), $T.class), $T.getClassFromName($S))", clazz.toString(), JacksonRowMapper.class, SqlReadSentenceGenerator.writeSelectSentence(clazz), MapSqlParameterSource.class, Map.class, ClassReflectionTool.class, clazz.toString())
                 .returns(ClassReflectionTool.getTypeNameForTemplateList(clazz))
                 .build();
     }
@@ -82,7 +82,7 @@ public class SpringRepositoryClassWriter {
         final String packageName = targetPackage + ".repository";
         final String className = String.format("%sRepository", clazz.getSimpleName());
         final JavaFile javaFile = JavaFile.builder(packageName, TypeSpec.classBuilder(className)
-                        .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                        .addModifiers(Modifier.PUBLIC)
                         .addAnnotation(Repository.class)
                         .addField(NamedParameterJdbcTemplate.class, NAMED_PARAMETER_JDBC_TEMPLATE, Modifier.FINAL, Modifier.PRIVATE)
                         .addMethod(writeBuilder())

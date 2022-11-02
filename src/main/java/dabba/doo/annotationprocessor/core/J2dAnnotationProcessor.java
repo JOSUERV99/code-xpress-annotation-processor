@@ -70,7 +70,6 @@ public class J2dAnnotationProcessor extends AbstractProcessor {
         for (Element element : roundEnv.getElementsAnnotatedWith(annotation)) {
             if (J2dSpringRestCrudApi.class.getName().equals(annotation.asType().toString())) {
                 final String packageName = ClassReflectionTool.getPackageName(element);
-                final String simpleName = ClassReflectionTool.getSimpleName(element);
                 final Collection<JavaFile> javaFiles = springRestApiWriter.write((TypeElement) element, packageName);
                 javaFileList.addAll(javaFiles);
             }

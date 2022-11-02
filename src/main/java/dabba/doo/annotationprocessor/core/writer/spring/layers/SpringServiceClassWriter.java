@@ -19,6 +19,7 @@ public class SpringServiceClassWriter {
     public MethodSpec writeBuilder(TypeName previousClassLayer) {
         return MethodSpec.constructorBuilder()
                 .addAnnotation(Autowired.class)
+                .addModifiers(Modifier.PUBLIC)
                 .addParameter(previousClassLayer, lastLayerAttributeName, Modifier.FINAL)
                 .addStatement("this.$N = $N", lastLayerAttributeName, lastLayerAttributeName)
                 .build();
@@ -65,7 +66,7 @@ public class SpringServiceClassWriter {
         final String packageName = targetPackage + ".service";
         final String className = String.format("%sService", clazz.getSimpleName());
         final JavaFile javaFile = JavaFile.builder(packageName, TypeSpec.classBuilder(className)
-                        .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                        .addModifiers(Modifier.PUBLIC)
                         .addAnnotation(Service.class)
                         .addField(previousLayerClazz, lastLayerAttributeName, Modifier.FINAL, Modifier.PRIVATE)
                         .addMethod(writeBuilder(previousLayerClazz))

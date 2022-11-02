@@ -125,16 +125,6 @@
                     <configuration>
                         <source>1.8</source>
                         <target>1.8</target>
-<!--                        <generatedSourcesDirectory>-->
-<!--                            ${project.build.directory}/generated-sources-->
-<!--                        </generatedSourcesDirectory>-->
-<!--                        <annotationProcessorPaths>-->
-<!--                            <path>-->
-<!--                                <groupId>org.projectlombok</groupId>-->
-<!--                                <artifactId>lombok</artifactId>-->
-<!--                                <version>${lombok.version}</version>-->
-<!--                            </path>-->
-<!--                        </annotationProcessorPaths>-->
                     </configuration>
                 </plugin>
             </plugins>

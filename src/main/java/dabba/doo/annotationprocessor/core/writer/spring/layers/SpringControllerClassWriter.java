@@ -10,13 +10,13 @@ import dabba.doo.annotationprocessor.core.annotations.J2dSpringRestCrudApi;
 import dabba.doo.annotationprocessor.core.reflection.ClassReflectionTool;
 import dabba.doo.annotationprocessor.core.writer.JavaClassFile;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
@@ -35,6 +35,7 @@ public class SpringControllerClassWriter {
     public MethodSpec writeBuilder(TypeName previousTypeLayer) {
         return MethodSpec.constructorBuilder()
                 .addAnnotation(Autowired.class)
+                .addModifiers(Modifier.PUBLIC)
                 .addParameter(ParameterSpec.builder(previousTypeLayer, lastLayerAttributeName, Modifier.FINAL).build())
                 .addStatement("this.$N = $N", lastLayerAttributeName, lastLayerAttributeName)
                 .build();
@@ -85,8 +86,8 @@ public class SpringControllerClassWriter {
         final String packageName = targetPackage + "." + fileSuffixPackageName;
         final String className = String.format("%sController", clazz.getSimpleName());
         final JavaFile javaFile =  JavaFile.builder(targetPackage + "." + fileSuffixPackageName, TypeSpec.classBuilder(className)
-                        .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                        .addAnnotation(Controller.class)
+                        .addModifiers(Modifier.PUBLIC)
+                        .addAnnotation(RestController.class)
                         .addField(previousLayerClazz, lastLayerAttributeName, Modifier.FINAL, Modifier.PRIVATE)
                         .addMethod(writeBuilder(previousLayerClazz))
                         .addMethod(buildGetMethod(clazz))
