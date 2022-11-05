@@ -12,10 +12,12 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * ClassReflectionTool class
@@ -28,6 +30,10 @@ public class ClassReflectionTool {
         return typeElement.getEnclosedElements().stream()
                 .filter(e -> ElementKind.FIELD.equals(e.getKind()))
                 .collect(Collectors.toList());
+    }
+
+    public static List<Field> getDeclaredFieldsByType(Class<?> clazz) {
+        return Arrays.asList(clazz.getDeclaredFields());
     }
 
     public static Field getIdField(Class<?> clazz) {
@@ -65,6 +71,10 @@ public class ClassReflectionTool {
     }
 
     public static String getTableName(TypeElement clazz) {
+        return clazz.getAnnotation(J2dEntity.class).tableName();
+    }
+
+    public static String getTableName(final Class<?> clazz) {
         return clazz.getAnnotation(J2dEntity.class).tableName();
     }
 
@@ -107,18 +117,7 @@ public class ClassReflectionTool {
         throw new IllegalStateException("No path fetched from annotation " + annotationClass.getName());
     }
 
-    public static Class<?> getClassFromName(final String className) {
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public static ClassName getClassNameFromClassName(String packageName, String simpleName) {
         return ClassName.get(packageName, simpleName);
     }
-
-
 }
