@@ -28,10 +28,10 @@ public class SqlReadSentenceGenerator {
 
         selectSentence.append(
                 columnNames.entrySet().stream()
-                        .map(entry -> String.format("`%s` as `%s`", entry.getValue(), entry.getKey()))
+                        .map(entry -> String.format("t.`%s` as `%s`", entry.getValue(), entry.getKey()))
                         .collect(Collectors.joining(",")));
 
-        return selectSentence.append(" from ").append(ClassReflectionTool.getTableName(clazz)).toString();
+        return selectSentence.append(" from ").append(ClassReflectionTool.getTableName(clazz)).append(" t").toString();
     }
 
     public static String writeSelectSentenceById(TypeElement clazz) {

@@ -65,12 +65,6 @@ public class RowMapperCreator {
         // get attributes
         final List<? extends Element> fields = ClassReflectionTool.getDeclaredFieldsByType(element);
 
-        final Map<String, String> columnNameMap =
-                fields.stream().collect(Collectors.toMap(
-                        e -> e.getSimpleName().toString(),
-                        e -> e.getAnnotation(J2dColumn.class).name()
-                ));
-
         final Map<String, TypeName> typeMap =
                 fields.stream().collect(Collectors.toMap(
                         e -> e.getSimpleName().toString(),
@@ -103,7 +97,7 @@ public class RowMapperCreator {
                     {
                         setTypeFromRs = "getFloat(";
                     }
-                    setLine += instanceName + "." + setCallString + "("+ rsKey + "." + setTypeFromRs + "\"" + columnNameMap.get(fieldName) + "\"));";
+                    setLine += instanceName + "." + setCallString + "("+ rsKey + "." + setTypeFromRs + "\"" + fieldName + "\"));";
                     return setLine;
                 }
         ).collect(Collectors.joining("\n"));
