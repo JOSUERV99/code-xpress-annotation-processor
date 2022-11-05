@@ -72,6 +72,10 @@ public class ClassReflectionTool {
         return Arrays.stream(element.toString().split("\\.")).filter(part -> part.matches("[a-z_]+")).collect(Collectors.joining("."));
     }
 
+    public static String getSimpleClassName(Element element) {
+        return Arrays.stream(element.toString().split("\\.")).filter(part -> part.matches("[A-Z][a-z_]+")).findFirst().get();
+    }
+
     public static String getSimpleNameForAttr(TypeName element) {
         final String simpleName =  Arrays.stream(element.toString().split("\\.")).filter(part -> part.matches("[A-Z][a-zA-Z]+")).findFirst().get();
         return ("" + simpleName.charAt(0)).toLowerCase() + simpleName.substring(1);
@@ -115,4 +119,6 @@ public class ClassReflectionTool {
     public static ClassName getClassNameFromClassName(String packageName, String simpleName) {
         return ClassName.get(packageName, simpleName);
     }
+
+
 }

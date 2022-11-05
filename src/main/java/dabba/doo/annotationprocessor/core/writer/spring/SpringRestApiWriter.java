@@ -9,6 +9,7 @@ import dabba.doo.annotationprocessor.core.writer.spring.config.SpringRestApiConf
 import dabba.doo.annotationprocessor.core.writer.spring.layers.SpringControllerClassWriter;
 import dabba.doo.annotationprocessor.core.writer.spring.layers.SpringRepositoryClassWriter;
 import dabba.doo.annotationprocessor.core.writer.spring.layers.SpringServiceClassWriter;
+import dabba.doo.annotationprocessor.db.rowmapping.RowMapperCreator;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.lang.model.element.TypeElement;
@@ -22,7 +23,8 @@ public class SpringRestApiWriter extends ClassWriter {
     public Collection<JavaFile> write(TypeElement clazz, String targetPackage) {
 
         final ClassName classNameForJdbcTemplate = ClassName.get(NamedParameterJdbcTemplate.class);
-        final JavaClassFile repositoryJavaFile = new SpringRepositoryClassWriter().writeFile(clazz, targetPackage);
+        final JavaClassFile mapperJavaFile = new RowMapperCreator().buildRowMapperJavaClassFile(clazz, targetPackage);
+        final JavaClassFile repositoryJavaFile = new SpringRepositoryClassWriter().writeFile(clazz, targetPackage, mapperJavaFile.getPackageName(), mapperJavaFile.getClassName());
         final ClassName classNameForRepo = ClassReflectionTool.getClassNameFromClassName(repositoryJavaFile.getPackageName(), repositoryJavaFile.getClassName());
 
         final JavaClassFile serviceJavaFile = new SpringServiceClassWriter().writeFile(clazz, classNameForRepo, targetPackage);
@@ -39,6 +41,7 @@ public class SpringRestApiWriter extends ClassWriter {
                 );
 
         return Arrays.asList(
+                mapperJavaFile.getJavaFile(),
                 repositoryJavaFile.getJavaFile(),
                 serviceJavaFile.getJavaFile(),
                 controllerJavaFile.getJavaFile(),
