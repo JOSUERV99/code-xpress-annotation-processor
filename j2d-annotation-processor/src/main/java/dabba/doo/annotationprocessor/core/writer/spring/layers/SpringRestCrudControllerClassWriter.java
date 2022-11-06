@@ -4,9 +4,7 @@ import com.squareup.javapoet.JavaFile;
 
 public class SpringRestCrudControllerClassWriter {
 
-    public JavaFile writeFile(Class<?> clazz, final String targetPackage) {
-        return null;
-    }
-
-
+  public JavaFile writeFile(Class<?> clazz, final String targetPackage) {
+    return null;
+  }
 }
