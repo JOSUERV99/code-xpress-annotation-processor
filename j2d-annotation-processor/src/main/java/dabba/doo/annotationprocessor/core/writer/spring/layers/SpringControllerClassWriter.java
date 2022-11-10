@@ -30,9 +30,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class SpringControllerClassWriter {
 
   private final String fileSuffixPackageName = "controller";
-  private final String fileSuffixClassName = "Controller";
   private String lastLayerAttributeName = "service";
 
+  /**
+   * Builder for controller class
+   *
+   * @param previousTypeLayer
+   * @return builder method
+   */
   public MethodSpec writeBuilder(TypeName previousTypeLayer) {
     return MethodSpec.constructorBuilder()
         .addAnnotation(Autowired.class)
@@ -44,6 +49,12 @@ public class SpringControllerClassWriter {
         .build();
   }
 
+  /**
+   * Create method for controller class
+   *
+   * @param clazz
+   * @return create method
+   */
   public MethodSpec buildCreateMethod(final TypeElement clazz) {
     return MethodSpec.methodBuilder("create")
         .addModifiers(Modifier.PUBLIC)
@@ -65,6 +76,12 @@ public class SpringControllerClassWriter {
         .build();
   }
 
+  /**
+   * Get method for controller class
+   *
+   * @param clazz
+   * @return get method
+   */
   public MethodSpec buildGetMethod(final TypeElement clazz) {
     return MethodSpec.methodBuilder("get")
         .addModifiers(Modifier.PUBLIC)
@@ -81,7 +98,13 @@ public class SpringControllerClassWriter {
         .build();
   }
 
-  public <T> MethodSpec buildUpdateMethod(final TypeElement clazz) {
+  /**
+   * Update method for controller class
+   *
+   * @param clazz
+   * @return update method
+   */
+  public MethodSpec buildUpdateMethod(final TypeElement clazz) {
     return MethodSpec.methodBuilder("update")
         .addModifiers(Modifier.PUBLIC)
         .addAnnotation(
@@ -109,6 +132,12 @@ public class SpringControllerClassWriter {
         .build();
   }
 
+  /**
+   * Delete method for controller class
+   *
+   * @param clazz
+   * @return delete method
+   */
   public MethodSpec buildDeleteMethod(final TypeElement clazz) {
     return MethodSpec.methodBuilder("delete")
         .addModifiers(Modifier.PUBLIC)
@@ -135,6 +164,14 @@ public class SpringControllerClassWriter {
         .build();
   }
 
+  /**
+   * Write JavaClassFile for controller layer
+   *
+   * @param clazz J2dEntity annotated clazz
+   * @param previousLayerClazz generated service class
+   * @param targetPackage package where J2dEntity class is located
+   * @return
+   */
   public JavaClassFile writeFile(
       TypeElement clazz, TypeName previousLayerClazz, final String targetPackage) {
     lastLayerAttributeName = NameGenerationTool.getSimpleNameForAttr(previousLayerClazz);

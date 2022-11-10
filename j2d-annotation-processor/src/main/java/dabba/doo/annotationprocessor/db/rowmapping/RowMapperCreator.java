@@ -14,8 +14,19 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import org.springframework.jdbc.core.RowMapper;
 
+/**
+ * Row mapper creator
+ *
+ * @author josue.rojas
+ */
 public class RowMapperCreator {
-
+  /**
+   * Build row mapper class (for select queries)
+   *
+   * @param clazz type element from annotation processing
+   * @param className class name as string
+   * @return TypeSpec for mapper method
+   */
   private TypeSpec buildRowMapperClass(final TypeElement clazz, final String className) {
     final ParameterizedTypeName parameterizedTypeName =
         ParameterizedTypeName.get(
@@ -36,6 +47,13 @@ public class RowMapperCreator {
         .build();
   }
 
+  /**
+   * Build row mapper java class file
+   *
+   * @param clazz type element from annotation processing
+   * @param packageName package name
+   * @return JavaClassFile for mapper generated class
+   */
   public JavaClassFile buildRowMapperJavaClassFile(
       final TypeElement clazz, final String packageName) {
     final String className = clazz.getSimpleName().toString() + "RowMapper";

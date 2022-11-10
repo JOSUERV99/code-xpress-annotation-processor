@@ -14,10 +14,20 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Spring Repository class writer
+ *
+ * @author josue.rojas
+ */
 public class SpringRepositoryClassWriter {
 
   public static final String NAMED_PARAMETER_JDBC_TEMPLATE = "namedParameterJdbcTemplate";
 
+  /**
+   * Builder method for repository class
+   *
+   * @return builder method
+   */
   public MethodSpec writeBuilder() {
     return MethodSpec.constructorBuilder()
         .addAnnotation(Autowired.class)
@@ -27,6 +37,11 @@ public class SpringRepositoryClassWriter {
         .build();
   }
 
+  /**
+   * Creator method for repository class
+   *
+   * @return create method
+   */
   public MethodSpec buildCreateMethod(final TypeElement clazz) {
     return MethodSpec.methodBuilder("create")
         .addModifiers(Modifier.PUBLIC)
@@ -43,6 +58,11 @@ public class SpringRepositoryClassWriter {
         .build();
   }
 
+  /**
+   * Get method for repository class
+   *
+   * @return get method
+   */
   public MethodSpec buildGetMethod(final TypeElement clazz, final ClassName mapperClassName) {
     return MethodSpec.methodBuilder("get")
         .addModifiers(Modifier.PUBLIC)
@@ -55,6 +75,11 @@ public class SpringRepositoryClassWriter {
         .build();
   }
 
+  /**
+   * Update method for repository class
+   *
+   * @return update method
+   */
   public MethodSpec buildUpdateMethod(final TypeElement clazz) {
     return MethodSpec.methodBuilder("update")
         .addModifiers(Modifier.PUBLIC)
@@ -75,6 +100,11 @@ public class SpringRepositoryClassWriter {
         .build();
   }
 
+  /**
+   * Delete method for repository class
+   *
+   * @return delete method
+   */
   public MethodSpec buildDeleteMethod(final TypeElement clazz) {
     return MethodSpec.methodBuilder("delete")
         .addModifiers(Modifier.PUBLIC)
@@ -93,6 +123,15 @@ public class SpringRepositoryClassWriter {
         .build();
   }
 
+  /**
+   * Write repository layer class
+   *
+   * @param clazz J2dEntity annotated class
+   * @param targetPackage package where entity is located
+   * @param mapperPackageName mapper package name
+   * @param mapperClassName mapper class name
+   * @return JavaClassFile for repository generated class
+   */
   public JavaClassFile writeFile(
       TypeElement clazz,
       final String targetPackage,

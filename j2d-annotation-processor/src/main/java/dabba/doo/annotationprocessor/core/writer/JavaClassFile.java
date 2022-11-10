@@ -2,6 +2,11 @@ package dabba.doo.annotationprocessor.core.writer;
 
 import com.squareup.javapoet.JavaFile;
 
+/**
+ * Java class file definition for code generator classes
+ *
+ * @author josue.rojas
+ */
 public class JavaClassFile {
 
   private String className;

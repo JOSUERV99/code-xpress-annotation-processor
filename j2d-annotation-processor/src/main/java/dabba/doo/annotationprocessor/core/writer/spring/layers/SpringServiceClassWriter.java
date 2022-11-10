@@ -11,10 +11,21 @@ import javax.lang.model.element.TypeElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Spring service class writer
+ *
+ * @author josue.rojas
+ */
 public class SpringServiceClassWriter {
 
   private String lastLayerAttributeName = "repository";
 
+  /**
+   * Builder method
+   *
+   * @param previousClassLayer repository class generated type name
+   * @return builder method for service class
+   */
   public MethodSpec writeBuilder(TypeName previousClassLayer) {
     return MethodSpec.constructorBuilder()
         .addAnnotation(Autowired.class)
@@ -24,6 +35,12 @@ public class SpringServiceClassWriter {
         .build();
   }
 
+  /**
+   * Creator method
+   *
+   * @param clazz J2dEntity annotated class
+   * @return create method for service class
+   */
   public MethodSpec buildCreateMethod(final TypeElement clazz) {
     return MethodSpec.methodBuilder("create")
         .addModifiers(Modifier.PUBLIC)
@@ -34,6 +51,12 @@ public class SpringServiceClassWriter {
         .build();
   }
 
+  /**
+   * Get method
+   *
+   * @param clazz J2dEntity annotated class
+   * @return get method for service class
+   */
   public MethodSpec buildGetMethod(final TypeElement clazz) {
     return MethodSpec.methodBuilder("get")
         .addModifiers(Modifier.PUBLIC)
@@ -42,6 +65,12 @@ public class SpringServiceClassWriter {
         .build();
   }
 
+  /**
+   * Delete method
+   *
+   * @param clazz J2dEntity annotated class
+   * @return delete method for service class
+   */
   public MethodSpec buildDeleteMethod(final TypeElement clazz) {
     return MethodSpec.methodBuilder("delete")
         .addModifiers(Modifier.PUBLIC)
@@ -51,6 +80,12 @@ public class SpringServiceClassWriter {
         .build();
   }
 
+  /**
+   * Update method
+   *
+   * @param clazz J2dEntity annotated class
+   * @return update method for service class
+   */
   public MethodSpec buildUpdateMethod(final TypeElement clazz) {
     return MethodSpec.methodBuilder("update")
         .addModifiers(Modifier.PUBLIC)
@@ -62,8 +97,16 @@ public class SpringServiceClassWriter {
         .build();
   }
 
+  /**
+   * Write class for Service layer
+   *
+   * @param clazz J2dEntity annotated class name
+   * @param previousLayerClazz repository generated class type name
+   * @param targetPackage package name from entity package name
+   * @return JavaClassFile for service generated class
+   */
   public JavaClassFile writeFile(
-      TypeElement clazz, TypeName previousLayerClazz, String targetPackage) {
+      final TypeElement clazz, final TypeName previousLayerClazz, final String targetPackage) {
     lastLayerAttributeName = NameGenerationTool.getSimpleNameForAttr(previousLayerClazz);
     final String packageName = targetPackage + ".service";
     final String className = String.format("%sService", clazz.getSimpleName());

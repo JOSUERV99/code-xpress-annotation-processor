@@ -14,8 +14,13 @@ import javax.lang.model.element.TypeElement;
  */
 public class SqlReadSentenceGenerator {
 
+  /**
+   * Write select with all columns
+   *
+   * @param clazz J2dEntity annotated class
+   * @return select query as string
+   */
   public static String writeSelectSentence(final TypeElement clazz) {
-
     final Map<String, String> columnNames =
         ClassReflectionTool.getDeclaredFields(clazz).stream()
             .filter(field -> field.getAnnotation(J2dColumn.class) != null)
@@ -38,6 +43,12 @@ public class SqlReadSentenceGenerator {
         .toString();
   }
 
+  /**
+   * Write select sentence by id
+   *
+   * @param clazz J2dEntity annotated class
+   * @return select query as string for id
+   */
   public static String writeSelectSentenceById(TypeElement clazz) {
     final String idFieldAsString =
         ClassReflectionTool.getIdField(clazz).getAnnotation(J2dColumn.class).name();

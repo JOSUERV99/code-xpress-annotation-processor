@@ -1,6 +1,7 @@
 package dabba.doo.annotationprocessor.db.tablecreator;
 
 import com.squareup.javapoet.TypeName;
+import dabba.doo.annotationprocessor.core.annotations.entity.J2dId;
 import dabba.doo.annotationprocessor.core.annotations.entity.types.BigIntColumn;
 import dabba.doo.annotationprocessor.core.annotations.entity.types.DecimalColumn;
 import dabba.doo.annotationprocessor.core.annotations.entity.types.IntColumn;
@@ -11,14 +12,28 @@ import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+/**
+ * Table creator for entities
+ *
+ * @author josue.rojas
+ */
 public class TableCreator {
 
-  @Autowired public static NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+  public NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-  public static Boolean createTableIfNotExists(final Class<?> clazz) {
+  public TableCreator(final NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+  }
+
+  /**
+   * Create table if not exists in current db connection
+   *
+   * @param clazz J2dEntity annotated class
+   * @return true if the table created correctly, false otherwise
+   */
+  public Boolean createTableIfNotExists(final Class<?> clazz) {
     final String creationScript = createQueryBasedOnType(clazz);
     System.out.println(creationScript);
     final String tableExistenceScript =
@@ -28,11 +43,17 @@ public class TableCreator {
     return true;
   }
 
-  private static final String getTableExistenceScript(final String tableName) {
+  private final String getTableExistenceScript(final String tableName) {
     return "SELECT 1 FROM `" + tableName + "`;";
   }
 
-  private static String createQueryBasedOnType(final Class<?> clazz) {
+  /**
+   * Create query based on type for table creation
+   *
+   * @param clazz J2dEntity annotated class
+   * @return
+   */
+  private String createQueryBasedOnType(final Class<?> clazz) {
     final StringBuilder stringBuilder = new StringBuilder();
     stringBuilder
         .append("CREATE TABLE `")
@@ -48,6 +69,8 @@ public class TableCreator {
                   fieldStr.append("`").append(field.getName()).append("` ");
                   fieldStr.append(getMySqlTypeBasedOnJavaType(clazz, field)).append(" ");
                   // TODO: add not null constraint
+                  if (field.isAnnotationPresent(J2dId.class))
+                    fieldStr.append("AUTO_INCREMENT ");
                   fieldStr
                       .append("COMMENT '")
                       .append(clazz.getSimpleName())
@@ -73,7 +96,14 @@ public class TableCreator {
         .toString();
   }
 
-  private static String getMySqlTypeBasedOnJavaType(final Class<?> clazz, final Field field) {
+  /**
+   * Get Mysql datatype on java class
+   *
+   * @param clazz J2dEntity annotated class
+   * @param field field to pass type to mysql datatype
+   * @return mysql data type
+   */
+  private String getMySqlTypeBasedOnJavaType(final Class<?> clazz, final Field field) {
     final TypeName type = TypeName.get(field.getType());
     try {
       if (type.equals(TypeName.get(Date.class))) return "date";

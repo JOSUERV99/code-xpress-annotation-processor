@@ -103,7 +103,8 @@ public class ClassReflectionTool {
       final TypeElement clazz, final Class<?> annotationClass) {
 
     if (J2dSpringRestCrudApi.class.equals(annotationClass)) {
-      return clazz.getAnnotation(J2dSpringRestCrudApi.class).path();
+      String path = clazz.getAnnotation(J2dSpringRestCrudApi.class).path();
+      return "/j2d" + ((path.startsWith("/")) ? path : "/" + path);
     }
 
     throw new IllegalStateException("No path fetched from annotation " + annotationClass.getName());
@@ -138,5 +139,20 @@ public class ClassReflectionTool {
   public static ClassName getClassNameFromClassName(
       final String packageName, final String simpleName) {
     return ClassName.get(packageName, simpleName);
+  }
+
+  /**
+   * Get field from class with attr name
+   * @param clazz target class
+   * @param attributeName attr name
+   * @return field with the same as attributeName param
+   */
+  public static Field getFieldWithName(Class<?> clazz, final String attributeName) {
+    Field[] fields = clazz.getDeclaredFields();
+    for (Field field : fields) {
+      if (field.getName().equals(attributeName))
+        return field;
+    }
+    return null;
   }
 }
