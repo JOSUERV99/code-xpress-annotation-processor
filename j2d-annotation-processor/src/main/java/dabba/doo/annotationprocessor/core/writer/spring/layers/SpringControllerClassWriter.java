@@ -15,6 +15,7 @@ import javax.lang.model.element.TypeElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -118,7 +119,7 @@ public class SpringControllerClassWriter {
         .addParameter(
             ParameterSpec.builder(NameGenerationTool.getTypeNameForId(clazz), "id", Modifier.FINAL)
                 .addAnnotation(
-                    AnnotationSpec.builder(RequestParam.class)
+                    AnnotationSpec.builder(PathVariable.class)
                         .addMember("value", "$S", "id")
                         .build())
                 .build())
@@ -155,7 +156,7 @@ public class SpringControllerClassWriter {
                     ClassReflectionTool.getIdField(clazz).getSimpleName().toString(),
                     Modifier.FINAL)
                 .addAnnotation(
-                    AnnotationSpec.builder(RequestParam.class)
+                    AnnotationSpec.builder(PathVariable.class)
                         .addMember("value", "$S", "id")
                         .build())
                 .build())

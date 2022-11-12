@@ -122,8 +122,10 @@ public class ClassReflectionTool {
       final TypeElement clazz, final Class<?> annotationClass, final String paramName) {
 
     if (J2dSpringRestCrudApi.class.equals(annotationClass)) {
+      String path = clazz.getAnnotation(J2dSpringRestCrudApi.class).path();
+      path = ((path.startsWith("/")) ? path : "/" + path);
       return String.format(
-          "%s/{%s}", clazz.getAnnotation(J2dSpringRestCrudApi.class).path(), paramName);
+          "/j2d%s/{%s}", path, paramName);
     }
 
     throw new IllegalStateException("No path fetched from annotation " + annotationClass.getName());

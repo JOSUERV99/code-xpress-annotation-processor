@@ -1,6 +1,7 @@
 package dabba.doo.annotationprocessor.core.writer.spring.layers;
 
 import com.squareup.javapoet.*;
+import dabba.doo.annotationprocessor.core.annotations.entity.J2dColumn;
 import dabba.doo.annotationprocessor.core.reflection.ClassReflectionTool;
 import dabba.doo.annotationprocessor.core.reflection.NameGenerationTool;
 import dabba.doo.annotationprocessor.core.writer.JavaClassFile;
@@ -95,7 +96,7 @@ public class SpringRepositoryClassWriter {
                 + "            ) > 0",
             SqlWriteSentenceGenerator.writeUpdateSentence(clazz),
             ParameterMapCreator.class,
-            "id")
+            ClassReflectionTool.getIdField(clazz).getAnnotation(J2dColumn.class).name())
         .returns(boolean.class)
         .build();
   }
@@ -118,7 +119,7 @@ public class SpringRepositoryClassWriter {
                 + "            ) > 0",
             SqlWriteSentenceGenerator.writeDeleteSentence(clazz),
             MapSqlParameterSource.class,
-            "id")
+                ClassReflectionTool.getIdField(clazz).getAnnotation(J2dColumn.class).name())
         .returns(boolean.class)
         .build();
   }

@@ -1,6 +1,7 @@
 package dabba.doo.annotationprocessor.db.tablecreator;
 
 import com.squareup.javapoet.TypeName;
+import dabba.doo.annotationprocessor.core.annotations.entity.J2dColumn;
 import dabba.doo.annotationprocessor.core.annotations.entity.J2dId;
 import dabba.doo.annotationprocessor.core.annotations.entity.types.BigIntColumn;
 import dabba.doo.annotationprocessor.core.annotations.entity.types.DecimalColumn;
@@ -10,8 +11,11 @@ import dabba.doo.annotationprocessor.core.reflection.ClassReflectionTool;
 import dabba.doo.annotationprocessor.core.reflection.NameGenerationTool;
 import java.lang.reflect.Field;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 /**
@@ -21,6 +25,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
  */
 public class TableCreator {
 
+  private static final Integer TABLE_CREATED_FLAG = 1;
   public NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
   public TableCreator(final NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
@@ -35,12 +40,26 @@ public class TableCreator {
    */
   public Boolean createTableIfNotExists(final Class<?> clazz) {
     final String creationScript = createQueryBasedOnType(clazz);
-    System.out.println(creationScript);
-    final String tableExistenceScript =
-        getTableExistenceScript(NameGenerationTool.getTableName(clazz));
-    System.out.println(tableExistenceScript);
-    System.out.println("namedjdbctemplate " + namedParameterJdbcTemplate);
-    return true;
+    final String tableExistenceScript = getTableExistenceScript(NameGenerationTool.getTableName(clazz));
+    try {
+      Integer tableExists = 0;
+
+      try {
+        tableExists = namedParameterJdbcTemplate.queryForObject(tableExistenceScript, new MapSqlParameterSource(), Integer.class);
+      }
+      catch (Exception e) {
+        System.out.println("J2D-Annotation-Processor: creating table '" + NameGenerationTool.getTableName(clazz) + "'");
+      }
+
+      if (!TABLE_CREATED_FLAG.equals(tableExists)) {
+        namedParameterJdbcTemplate.update(creationScript, new HashMap<>());
+        System.out.println("J2D-Annotation-Processor: table '" + NameGenerationTool.getTableName(clazz) + "' generated correctly");
+        return true;
+      }
+    } catch (Exception e) {
+      System.out.println("J2D-Annotation-Processor: something wrong happened at '" + NameGenerationTool.getTableName(clazz) + "' table creation \n" + e.getMessage());
+    }
+    return false;
   }
 
   private final String getTableExistenceScript(final String tableName) {
@@ -66,7 +85,7 @@ public class TableCreator {
             .map(
                 field -> {
                   final StringBuilder fieldStr = new StringBuilder();
-                  fieldStr.append("`").append(field.getName()).append("` ");
+                  fieldStr.append("`").append(field.getAnnotation(J2dColumn.class).name()).append("` ");
                   fieldStr.append(getMySqlTypeBasedOnJavaType(clazz, field)).append(" ");
                   // TODO: add not null constraint
                   if (field.isAnnotationPresent(J2dId.class))
