@@ -50,8 +50,6 @@ public class ParameterMapCreator {
                         })
                     .collect(
                         Collectors.toMap(kv -> tableNames.get(kv.getKey()), kv -> kv.getValue())));
-
-    System.out.println("PARAMSOURCE: " + paramSource);
     return paramSource;
   }
 }

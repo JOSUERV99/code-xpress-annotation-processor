@@ -7,30 +7,19 @@
     <artifactId>j2d-annotation-processor</artifactId>
     <name>J2D Annotation Processor</name>
     <version>0.0.1</version>
-    <description>An annotation processor to generate java code avoiding repetitive project structures</description>
+    <description>An annotation processor to generate java code to conforms a full API service</description>
 
     <properties>
         <default.encoding>UTF-8</default.encoding>
         <jdk8>${env.JAVA_HOME}</jdk8>
         <compiler.jdk>${jdk8}</compiler.jdk>
-        <!-- Common versions between dependencies -->
-        <spring.version>4.3.18.RELEASE</spring.version>
-        <spring.security.version>4.2.7.RELEASE</spring.security.version>
-        <spring.security.oauth.version>2.3.4.RELEASE</spring.security.oauth.version>
-        <spring.security.jwt.version>1.0.10.RELEASE</spring.security.jwt.version>
-        <spring.hateoas.version>0.24.0.RELEASE</spring.hateoas.version>
-        <spring.redis.version>1.8.13.RELEASE</spring.redis.version>
-        <spring.rabbit.version>1.7.8.RELEASE</spring.rabbit.version>
-        <fasterxml.jackson.version>2.10.2</fasterxml.jackson.version>
-        <fasterxml.jackson.databind.version>2.10.2</fasterxml.jackson.databind.version>
-        <javax.validation.version>1.0.0.GA</javax.validation.version>
-        <junit.version>4.12</junit.version>
-        <payroll.library.events.admin.version>0.0.4d</payroll.library.events.admin.version>
-
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mockito.version>1.9.5</mockito.version>
+        <!-- Common versions between dependencies -->
+        <spring.version>4.3.18.RELEASE</spring.version>
+        <fasterxml.jackson.version>2.10.2</fasterxml.jackson.version>
+        <fasterxml.jackson.databind.version>2.10.2</fasterxml.jackson.databind.version>
         <javapoet.version>1.9.0</javapoet.version>
         <auto-service.version>1.0-rc2</auto-service.version>
         <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
@@ -97,12 +86,6 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
             <version>${fasterxml.jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
