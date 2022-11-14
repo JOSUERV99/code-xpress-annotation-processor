@@ -18,10 +18,10 @@ public class JdbcTemplateHolder {
 
   private static DataSource dataSource() {
     DriverManagerDataSource dataSource = new DriverManagerDataSource();
-    dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-    dataSource.setUrl("jdbc:mysql://localhost:3306/l2gs");
-    dataSource.setUsername("root");
-    dataSource.setPassword("root");
+    dataSource.setDriverClassName("<driver_class_name>");
+    dataSource.setUrl("<url>");
+    dataSource.setUsername("<user>");
+    dataSource.setPassword("<pass>");
     return dataSource;
   }
 

@@ -3,14 +3,12 @@ package dabba.doo.annotationprocessor.db.paramresolver;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dabba.doo.annotationprocessor.core.annotations.entity.J2dColumn;
-
+import dabba.doo.annotationprocessor.core.annotations.entity.J2dId;
+import dabba.doo.annotationprocessor.core.reflection.ClassReflectionTool;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import dabba.doo.annotationprocessor.core.annotations.entity.J2dId;
-import dabba.doo.annotationprocessor.core.reflection.ClassReflectionTool;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
@@ -36,24 +34,24 @@ public class ParameterMapCreator {
             .filter(field -> field.isAnnotationPresent(J2dColumn.class))
             .collect(
                 Collectors.toMap(
-                        field -> field.getName(),
-                        field -> field.getAnnotation(J2dColumn.class).name()
-                    ));
+                    field -> field.getName(),
+                    field -> field.getAnnotation(J2dColumn.class).name()));
+    final MapSqlParameterSource paramSource =
+        new MapSqlParameterSource()
+            .addValues(
+                kvObject.entrySet().stream()
+                    .filter(
+                        kv -> {
+                          final Field field =
+                              ClassReflectionTool.getFieldWithName(
+                                  instance.getClass(), kv.getKey());
+                          return field.isAnnotationPresent(J2dColumn.class)
+                              && !field.isAnnotationPresent(J2dId.class);
+                        })
+                    .collect(
+                        Collectors.toMap(kv -> tableNames.get(kv.getKey()), kv -> kv.getValue())));
 
-    System.out.println("TABLENAMES" + tableNames);
-    System.out.println("OBJECT" + kvObject);
-
-
-    MapSqlParameterSource paramSource = new MapSqlParameterSource()
-        .addValues(
-            kvObject.entrySet().stream()
-                    .filter(kv -> {
-                        final Field field = ClassReflectionTool.getFieldWithName(instance.getClass(), kv.getKey());
-                        return field.isAnnotationPresent(J2dColumn.class) && !field.isAnnotationPresent(J2dId.class);
-                    })
-                .collect(Collectors.toMap(kv -> tableNames.get(kv.getKey()), kv -> kv.getValue())));
-
-      System.out.println("PARAMSOURCE: " + paramSource);
+    System.out.println("PARAMSOURCE: " + paramSource);
     return paramSource;
   }
 }

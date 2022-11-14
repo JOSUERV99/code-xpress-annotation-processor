@@ -11,7 +11,7 @@ import lombok.Data;
 
 @Data
 @J2dSpringRestCrudApi(path = "/message")
-@J2dEntity(tableName = "message")
+@J2dEntity(tableName = "message_3")
 public class Message {
 
     @J2dId(generated = true)

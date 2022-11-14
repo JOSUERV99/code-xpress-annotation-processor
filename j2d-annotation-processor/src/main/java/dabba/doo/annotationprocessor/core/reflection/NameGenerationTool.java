@@ -23,6 +23,7 @@ public class NameGenerationTool {
    * @return ClassName for type element
    */
   public static TypeName getTypeNameFromTypeElement(TypeElement typeElement) {
+
     return ClassName.get(typeElement);
   }
 

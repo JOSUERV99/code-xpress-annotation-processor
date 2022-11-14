@@ -119,7 +119,7 @@ public class SpringRepositoryClassWriter {
                 + "            ) > 0",
             SqlWriteSentenceGenerator.writeDeleteSentence(clazz),
             MapSqlParameterSource.class,
-                ClassReflectionTool.getIdField(clazz).getAnnotation(J2dColumn.class).name())
+            ClassReflectionTool.getIdField(clazz).getAnnotation(J2dColumn.class).name())
         .returns(boolean.class)
         .build();
   }
