@@ -1,7 +1,7 @@
 # Code-Xpress-annotation-processor
 A Java annotation processor for entity persistence using Spring
 
-With a class like this, using the J2D annotations, the annotation processor will generate a full CRUD RESTful service
+With a class like this, using the CX annotations, the annotation processor will generate a full CRUD RESTful service
 that be can accesed through `<base_url>:<port>/j2d/message` with `GET`, `POST`, `PUT`, `DELETE` HTTP requests!
 
 ```java
