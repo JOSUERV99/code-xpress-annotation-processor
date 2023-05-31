@@ -12,23 +12,23 @@ public class Message {
 
     @CXId(generated = true)
     @CXColumn(name = "ID")
-    @BigIntColumn()
+    @BigInt()
     private Long id;
 
     @CXColumn(name = "CONTENT")
-    @VarcharColumn()
+    @Varchar()
     private String content;
 
     @CXColumn(name = "FROM_CONTACT_NAME")
-    @VarcharColumn(length = 200)
+    @Varchar(length = 200)
     private String from;
 
     @CXColumn(name = "TO_CONTACT_NAME")
-    @VarcharColumn(length = 199)
+    @Varchar(length = 199)
     private String to;
 
     @CXColumn(name = "READERS_COUNTER")
-    @IntColumn
+    @Int
     private Integer readBy;
 }
 
