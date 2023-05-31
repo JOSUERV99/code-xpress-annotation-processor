@@ -16,20 +16,20 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<j2d-annotation-processor.version>0.0.1</j2d-annotation-processor.version>
+		<cx-annotation-processor.version>0.0.1</cx-annotation-processor.version>
 		<lombok.version>1.18.20</lombok.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>dabba.doo</groupId>
-			<artifactId>j2d-annotation-processor</artifactId>
-			<version>${j2d-annotation-processor.version}</version>
+			<groupId>dev.tools</groupId>
+			<artifactId>cx-annotation-processor</artifactId>
+			<version>${cx-annotation-processor.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.6</version>
+			<version>8.0.33</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -73,9 +73,9 @@
 							<version>${lombok.version}</version>
 						</path>
 						<path>
-							<groupId>dabba.doo</groupId>
-							<artifactId>j2d-annotation-processor</artifactId>
-							<version>${j2d-annotation-processor.version}</version>
+							<groupId>dev.tools</groupId>
+							<artifactId>cx-annotation-processor</artifactId>
+							<version>${cx-annotation-processor.version}</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>

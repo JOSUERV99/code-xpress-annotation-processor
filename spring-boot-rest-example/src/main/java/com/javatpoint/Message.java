@@ -1,37 +1,37 @@
 package com.javatpoint;
 
-import dabba.doo.annotationprocessor.core.annotations.J2dSpringRestCrudApi;
-import dabba.doo.annotationprocessor.core.annotations.entity.J2dColumn;
-import dabba.doo.annotationprocessor.core.annotations.entity.J2dEntity;
-import dabba.doo.annotationprocessor.core.annotations.entity.J2dId;
-import dabba.doo.annotationprocessor.core.annotations.entity.types.BigIntColumn;
-import dabba.doo.annotationprocessor.core.annotations.entity.types.IntColumn;
-import dabba.doo.annotationprocessor.core.annotations.entity.types.VarcharColumn;
+import dev.tools.annotationprocessor.core.annotations.CXSpringRestCrudApi;
+import dev.tools.annotationprocessor.core.annotations.entity.CXColumn;
+import dev.tools.annotationprocessor.core.annotations.entity.CXEntity;
+import dev.tools.annotationprocessor.core.annotations.entity.CXId;
+import dev.tools.annotationprocessor.core.annotations.entity.types.column.BigInt;
+import dev.tools.annotationprocessor.core.annotations.entity.types.column.Int;
+import dev.tools.annotationprocessor.core.annotations.entity.types.column.Varchar;
 import lombok.Data;
 
 @Data
-@J2dSpringRestCrudApi(path = "/message")
-@J2dEntity(tableName = "message_demo_01")
+@CXSpringRestCrudApi(path = "/message")
+@CXEntity(tableName = "message_demo_01")
 public class Message {
 
-    @J2dId(generated = true)
-    @J2dColumn(name = "ID")
-    @BigIntColumn()
+    @CXId(generated = true)
+    @CXColumn(name = "ID")
+    @BigInt()
     private Long id;
 
-    @J2dColumn(name = "CONTENT")
-    @VarcharColumn()
+    @CXColumn(name = "CONTENT")
+    @Varchar()
     private String content;
 
-    @J2dColumn(name = "FROM_CONTACT_NAME")
-    @VarcharColumn(length = 200)
+    @CXColumn(name = "FROM_CONTACT_NAME")
+    @Varchar(length = 200)
     private String from;
 
-    @J2dColumn(name = "TO_CONTACT_NAME")
-    @VarcharColumn(length = 199)
+    @CXColumn(name = "TO_CONTACT_NAME")
+    @Varchar(length = 199)
     private String to;
 
-    @J2dColumn(name = "READERS_COUNTER")
-    @IntColumn
+    @CXColumn(name = "READERS_COUNTER")
+    @Int
     private Integer readBy;
 }

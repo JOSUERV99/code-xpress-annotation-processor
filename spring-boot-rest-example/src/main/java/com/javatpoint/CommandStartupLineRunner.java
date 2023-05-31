@@ -1,6 +1,6 @@
 package com.javatpoint;
 
-import dabba.doo.annotationprocessor.db.tablecreator.TableCreator;
+import dev.tools.annotationprocessor.db.tablecreator.TableCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
