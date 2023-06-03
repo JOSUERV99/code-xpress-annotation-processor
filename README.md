@@ -1,12 +1,17 @@
 # Code-Xpress-annotation-processor
-A Java annotation processor for entity persistence using Spring
+
+A Java annotation processor for entity persistence using Spring, using the idea to generate Java code
+in the compilation time, with CX annotation you will be enabled to create a REST API just annotation simple Java classes,
+create full APIs without adding new heavy frameworks and using a very straightforward approach
 
 With a class like this, using the CX annotations, the annotation processor will generate a full CRUD RESTful service
-that be can accesed through `<base_url>:<port>/CX/message` with `GET`, `POST`, `PUT`, `DELETE` HTTP requests!
+that be can accesed through `<host_url>:<server.port>/CX/message` with `GET`, `POST`, `PUT`, `DELETE` HTTP requests!
 
 Features:
 - Repository, Service, Controller layers auto-generated
 - Auto table creation
+- Using REST standard for API's
+- JSON response for auto generated controllers
 - Configurable database connection using JDBC
 - Custom API base path
 - Database table creation by CX entities
