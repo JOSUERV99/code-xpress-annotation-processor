@@ -5,7 +5,7 @@ in the compilation time, with CX annotation you will be enabled to create a REST
 create full APIs without adding new heavy frameworks and using a very straightforward approach
 
 With a class like this, using the CX annotations, the annotation processor will generate a full CRUD RESTful service
-that be can accesed through `<host_url>:<server.port>/CX/message` with `GET`, `POST`, `PUT`, `DELETE` HTTP requests!
+that be can accesed through `<host_url>:<server.port>/CX/{custom-path-for-cx-entity}` with `GET`, `POST`, `PUT`, `DELETE` HTTP requests!
 
 Features:
 - Repository, Service, Controller layers auto-generated
